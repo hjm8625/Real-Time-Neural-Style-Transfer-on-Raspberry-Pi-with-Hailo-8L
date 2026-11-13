@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+
+# Downloaded and generated datasets
+data/*
+!data/SOURCES.md
+
+# Training outputs
+outputs/*
+!outputs/sample_epoch_*.jpg

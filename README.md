@@ -103,6 +103,12 @@ outputs/
 
 아래 이미지는 학습에 포함되지 않은 동일한 validation 사진을 각 epoch의 모델로 변환한 결과입니다.
 
+<p align="center">
+  <img src="images/000000000802.jpg" alt="Original validation image" width="280">
+  <br>
+  <sub>원본 validation 이미지</sub>
+</p>
+
 | Epoch 1 | Epoch 2 | Epoch 3 | Epoch 4 | Epoch 5 |
 |---|---|---|---|---|
 | ![Epoch 1](outputs/sample_epoch_001.jpg) | ![Epoch 2](outputs/sample_epoch_002.jpg) | ![Epoch 3](outputs/sample_epoch_003.jpg) | ![Epoch 4](outputs/sample_epoch_004.jpg) | ![Epoch 5](outputs/sample_epoch_005.jpg) |

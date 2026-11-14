@@ -2,6 +2,10 @@
 
 Raspberry Pi 5와 Hailo-8L NPU를 이용해 카메라 영상을 Vincent van Gogh의 *The Starry Night* 화풍으로 실시간 변환하는 프로젝트입니다.
 
+<p align="center">
+  <img src="images/starry_night.jpg" alt="Vincent van Gogh - The Starry Night" width="280">
+</p>
+
 Johnson, Alahi, Fei-Fei의 *Perceptual Losses for Real-Time Style Transfer and Super-Resolution*을 기반으로 transformation network를 PyTorch로 구현하고, Hailo-8L 배포 호환성을 고려해 일부 연산을 변경했습니다. 새로운 스타일 변환 알고리즘을 제안하기보다 논문 기반 모델의 학습, ONNX 변환, INT8 양자화, NPU 배포 및 성능 평가에 초점을 둡니다.
 
 ## 목표
@@ -209,10 +213,10 @@ npu_project/
 
 Calibration 이미지 100장을 사용하여 ONNX Runtime CPU FP32 추론과 Hailo-8L INT8 추론을 비교했습니다. 첫 번째 이미지를 각각 10회 warm-up후 측정함.
 
-| 장치 | 정밀도 | 평균 latency | 중앙값 | P95 | 최소 | 최대 | 표준편차 | FPS |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| CPU | FP32 | 244.988 ms | 244.884 ms | 247.378 ms | 241.268 ms | 252.237 ms | 1.709 ms | 4.08 |
-| Hailo-8L | INT8 | 5.841 ms | 5.756 ms | 5.783 ms | 5.719 ms | 9.261 ms | 0.491 ms | 171.21 |
+| 장치 | 정밀도 | 평균 latency | 중앙값 | 최소 | 최대 | 표준편차 | FPS |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| CPU | FP32 | 244.988 ms | 244.884 ms | 241.268 ms | 252.237 ms | 1.709 ms | 4.08 |
+| Hailo-8L | INT8 | 5.841 ms | 5.756 ms | 5.719 ms | 9.261 ms | 0.491 ms | 171.21 |
 
 평균 latency 기준 Hailo-8L은 CPU보다 약 **41.94배** 빨랐습니다. 100장 전체의 순수 추론 시간 합계는 CPU 약 `24.499초`, Hailo-8L 약 `0.584초`였습니다.
 

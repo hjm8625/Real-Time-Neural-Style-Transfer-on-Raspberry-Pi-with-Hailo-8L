@@ -109,6 +109,17 @@ outputs/
 
 학습이 진행되면서 Starry Night의 푸른 색조와 붓 터치가 안정화되며, Epoch 10 모델을 최종 PyTorch 기준 모델로 선택했습니다.
 
+## Epoch 10 변환 예시
+
+COCO 이미지 5장에 최종 Epoch 10 모델을 적용한 결과입니다.
+
+| 예시 1 | 예시 2 | 예시 3 | 예시 4 | 예시 5 |
+|---|---|---|---|---|
+| ![Original 1](images/001.jpg) | ![Original 2](images/002.jpg) | ![Original 3](images/003.jpg) | ![Original 4](images/004.jpg) | ![Original 5](images/005.jpg) |
+| ![Result 1](images/result_001.jpg) | ![Result 2](images/result_002.jpg) | ![Result 3](images/result_003.jpg) | ![Result 4](images/result_004.jpg) | ![Result 5](images/result_005.jpg) |
+
+위쪽은 원본 이미지이고 아래쪽은 Starry Night 화풍으로 변환한 결과입니다.
+
 ## 데이터셋
 
 ### Content images
@@ -148,11 +159,19 @@ npu_project/
 ├── train.py
 ├── export_onnx.py
 ├── verify_onnx.py
-├── inference_image.py
-├── realtime_camera.py
+├── calibration.py
+├── compile_hef.py
+├── cpu_npu_benchmark.py
 ├── starry_night.onnx
+├── raspberry_pi/
+│   ├── inference_image.py
+│   ├── realtime_camera.py
+│   ├── cpu_npu_latency.csv
+│   └── cpu_npu_summary.csv
 ├── images/
 │   ├── 000000000802.jpg
+│   ├── 001.jpg ~ 005.jpg
+│   ├── result_001.jpg ~ result_005.jpg
 │   └── starry_night.jpg
 ├── outputs/
 │   ├── model_epoch_001.pt
@@ -184,6 +203,31 @@ npu_project/
 - PyTorch 대비 최대 절대 오차: `0.0000167489`
 - PyTorch 대비 평균 절대 오차: `0.0000006151`
 - 연산자: `Conv`, `Relu`, `Add`, `Resize`, `Tanh`, `Constant`
+- 이 과정에서 reflection padding, convTranspose2d 제외
+
+## Raspberry Pi CPU와 Hailo-8L 성능 비교
+
+Calibration 이미지 100장을 사용하여 ONNX Runtime CPU FP32 추론과 Hailo-8L INT8 추론을 비교했습니다. 첫 번째 이미지를 각각 10회 warm-up후 측정함.
+
+| 장치 | 정밀도 | 평균 latency | 중앙값 | P95 | 최소 | 최대 | 표준편차 | FPS |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| CPU | FP32 | 244.988 ms | 244.884 ms | 247.378 ms | 241.268 ms | 252.237 ms | 1.709 ms | 4.08 |
+| Hailo-8L | INT8 | 5.841 ms | 5.756 ms | 5.783 ms | 5.719 ms | 9.261 ms | 0.491 ms | 171.21 |
+
+평균 latency 기준 Hailo-8L은 CPU보다 약 **41.94배** 빨랐습니다. 100장 전체의 순수 추론 시간 합계는 CPU 약 `24.499초`, Hailo-8L 약 `0.584초`였습니다.
+
+표의 FPS는 평균 추론 latency의 역수로 계산한 모델 처리량이며, 카메라 캡처, resize, 전처리, 후처리 및 화면 출력 시간은 포함하지 않습니다.
+
+CPU와 NPU 출력은 동일한 `[-1, 1]` 범위에서 비교했습니다.
+
+- 이미지별 mean absolute error 평균: `0.041421`
+- 이미지별 mean absolute error 범위: `0.020591~0.078583`
+- 전체 이미지에서 관측된 최대 absolute error: `0.875812`
+
+세부 측정값은 다음 파일에 저장되어 있습니다.
+
+- (raspberry_pi/cpu_npu_latency.csv)
+- (raspberry_pi/cpu_npu_summary.csv)
 
 ## 배포 계획
 
@@ -199,25 +243,10 @@ HEF compile
 Raspberry Pi Camera + HailoRT 실시간 추론
 ```
 
-다음 단계에서는 검증된 ONNX 모델을 Hailo DFC로 parsing한 뒤 실제 사진으로 calibration을 수행하고 Hailo-8L용 HEF를 생성합니다.
-
-## 성능 평가 계획
-
-- ONNX Runtime CPU와 Hailo-8L 추론 latency 및 FPS 비교
-- 전처리와 화면 출력을 포함한 end-to-end latency 측정
-- FP32와 INT8 출력의 시각적 비교
-- PSNR 및 SSIM 측정
-- 256×256 기준 10 FPS 이상 목표
-- 30 FPS는 확장 목표
-
-측정하지 않은 성능을 결과로 주장하지 않으며 실제 장치, 소프트웨어 버전 및 측정 조건을 함께 기록합니다.
 
 ## 참고 자료
 
 - Justin Johnson, Alexandre Alahi, Li Fei-Fei, *Perceptual Losses for Real-Time Style Transfer and Super-Resolution*, ECCV 2016
 - 논문: <https://arxiv.org/abs/1603.08155>
 - 공식 구현: <https://github.com/jcjohnson/fast-neural-style>
-
-## 라이선스 및 출처
-
-본 프로젝트는 Johnson et al.의 연구와 공식 구현을 참고한 재현 및 배포 프로젝트입니다. 참고한 연구, 외부 코드, COCO 데이터셋 및 스타일 이미지의 출처와 이용 조건을 명시하고, 직접 구현하거나 Hailo 배포를 위해 변경한 부분과 구분합니다.
+- 수도권 ICT 이노베이션 스퀘어 NPU수업

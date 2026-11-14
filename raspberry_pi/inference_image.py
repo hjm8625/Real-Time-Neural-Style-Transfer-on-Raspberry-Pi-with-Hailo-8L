@@ -16,9 +16,10 @@ from hailo_platform import (
 )
 
 
-HEF_PATH = Path("starry_night.hef")
-INPUT_IMAGE = Path("images/000000000802.jpg")
-OUTPUT_IMAGE = Path("hef_output.jpg")
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+HEF_PATH = PROJECT_DIR / "starry_night.hef"
+INPUT_IMAGE = PROJECT_DIR / "images" / "000000000802.jpg"
+OUTPUT_IMAGE = PROJECT_DIR / "hef_output.jpg"
 
 hef = HEF(str(HEF_PATH))
 input_info = hef.get_input_vstream_infos()[0]

@@ -18,7 +18,8 @@ from hailo_platform import (
 from picamera2 import Picamera2
 
 
-HEF_PATH = Path("starry_night.hef")
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+HEF_PATH = PROJECT_DIR / "starry_night.hef"
 CAMERA_SIZE = (640, 480)
 
 hef = HEF(str(HEF_PATH))

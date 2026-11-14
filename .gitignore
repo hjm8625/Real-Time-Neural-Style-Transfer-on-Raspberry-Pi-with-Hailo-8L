@@ -4,6 +4,10 @@ __pycache__/
 # Downloaded and generated datasets
 data/*
 !data/SOURCES.md
+calibration/
+calibration_output/
+hailo_output/
+benchmark_output/
 
 # Training outputs
 outputs/*

@@ -7,8 +7,9 @@ import torch
 from model import StyleTransferNet
 
 
-CHECKPOINT_PATH = Path("outputs/model_epoch_010.pt")
-ONNX_PATH = Path("starry_night.onnx")
+PROJECT_DIR = Path(__file__).resolve().parent
+CHECKPOINT_PATH = PROJECT_DIR / "outputs" / "model_epoch_010.pt"
+ONNX_PATH = PROJECT_DIR / "starry_night.onnx"
 INPUT_SHAPE = (1, 3, 256, 256)
 
 model = StyleTransferNet()

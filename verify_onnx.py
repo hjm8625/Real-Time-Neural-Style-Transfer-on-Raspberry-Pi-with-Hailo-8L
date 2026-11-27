@@ -13,9 +13,10 @@ from torchvision import transforms
 from model import StyleTransferNet
 
 
-CHECKPOINT_PATH = Path("outputs/model_epoch_010.pt")
-ONNX_PATH = Path("starry_night.onnx")
-TEST_IMAGE_PATH = Path("images/000000000802.jpg")
+PROJECT_DIR = Path(__file__).resolve().parent
+CHECKPOINT_PATH = PROJECT_DIR / "outputs" / "model_epoch_010.pt"
+ONNX_PATH = PROJECT_DIR / "starry_night.onnx"
+TEST_IMAGE_PATH = PROJECT_DIR / "images" / "000000000802.jpg"
 RTOL = 1e-4 #relative tolerance
 ATOL = 1e-4 #absolute tolerance
 

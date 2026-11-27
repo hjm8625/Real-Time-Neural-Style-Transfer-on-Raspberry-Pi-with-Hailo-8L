@@ -171,11 +171,14 @@ npu_project/
 ├── verify_onnx.py
 ├── calibration.py
 ├── compile_hef.py
-├── cpu_npu_benchmark.py
 ├── starry_night.onnx
+├── calibration/
+├── calibration_output/
 ├── raspberry_pi/
 │   ├── inference_image.py
 │   ├── realtime_camera.py
+│   ├── realtime_comparison.py
+│   ├── cpu_npu_benchmark.py
 │   ├── cpu_npu_latency.csv
 │   └── cpu_npu_summary.csv
 ├── images/
@@ -188,9 +191,10 @@ npu_project/
 │   ├── sample_epoch_001.jpg
 │   ├── ...
 │   ├── model_epoch_010.pt
-│   └── sample_epoch_010.jpg
+│   ├── sample_epoch_010.jpg
+│   └── results.gif
 └── data/
-    └── SOURCES.md
+    └── val2017/
 ```
 
 ## PyTorch 검증 결과
@@ -253,6 +257,9 @@ HEF compile
 Raspberry Pi Camera + HailoRT 실시간 추론
 ```
 
+## AI 활용
+
+Raspberry Pi의 HailoRT 추론 및 카메라 실행 코드는 생성형 AI의 도움을 받아 작성한 후, 프로젝트 환경에 맞게 수정하고 직접 검증했습니다.
 
 ## 참고 자료
 
@@ -260,3 +267,9 @@ Raspberry Pi Camera + HailoRT 실시간 추론
 - 논문: <https://arxiv.org/abs/1603.08155>
 - 공식 구현: <https://github.com/jcjohnson/fast-neural-style>
 - 수도권 ICT 이노베이션 스퀘어 NPU수업
+
+## 실시간 추론 결과
+
+<p align="center">
+  <img src="outputs/results.gif" alt="Raspberry Pi Hailo-8L real-time style transfer result" width="800">
+</p>

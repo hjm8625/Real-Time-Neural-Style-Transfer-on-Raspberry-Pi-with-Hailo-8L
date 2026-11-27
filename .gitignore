@@ -12,3 +12,4 @@ benchmark_output/
 # Training outputs
 outputs/*
 !outputs/sample_epoch_*.jpg
+!outputs/results.gif

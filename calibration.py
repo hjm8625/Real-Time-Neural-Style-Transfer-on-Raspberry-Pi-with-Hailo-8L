@@ -7,8 +7,9 @@ import pandas as pd
 from PIL import Image
 
 
-CALIBRATION_DIR = Path("calibration")
-OUTPUT_DIR = Path("calibration_output")
+PROJECT_DIR = Path(__file__).resolve().parent
+CALIBRATION_DIR = PROJECT_DIR / "calibration"
+OUTPUT_DIR = PROJECT_DIR / "calibration_output"
 NPY_FILE = OUTPUT_DIR / "starry_night_calibration_100.npy"
 CSV_FILE = OUTPUT_DIR / "starry_night_calibration_100.csv"
 

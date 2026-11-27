@@ -23,11 +23,12 @@ from hailo_platform import (
 WARMUP_RUNS = 10
 MAX_IMAGES = 100
 
-PROJECT_DIR = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
 CALIBRATION_DIR = PROJECT_DIR / "calibration"
 ONNX_PATH = PROJECT_DIR / "starry_night.onnx"
 HEF_PATH = PROJECT_DIR / "starry_night.hef"
-OUTPUT_DIR = PROJECT_DIR / "benchmark_output"
+OUTPUT_DIR = SCRIPT_DIR
 RAW_CSV_PATH = OUTPUT_DIR / "cpu_npu_latency.csv"
 SUMMARY_CSV_PATH = OUTPUT_DIR / "cpu_npu_summary.csv"
 

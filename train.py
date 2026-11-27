@@ -14,9 +14,10 @@ from model import StyleTransferNet
 
 
 # Training settings
-DATA_DIR = Path("data/val2017")
-STYLE_IMAGE = Path("images/starry_night.jpg")
-OUTPUT_DIR = Path("outputs")
+PROJECT_DIR = Path(__file__).resolve().parent
+DATA_DIR = PROJECT_DIR / "data" / "val2017"
+STYLE_IMAGE = PROJECT_DIR / "images" / "starry_night.jpg"
+OUTPUT_DIR = PROJECT_DIR / "outputs"
 
 TRAIN_SIZE = 3000
 VAL_SIZE = 100

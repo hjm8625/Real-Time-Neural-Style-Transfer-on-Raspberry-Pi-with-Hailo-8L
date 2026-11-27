@@ -45,14 +45,14 @@ class VGGFeatures(nn.Module):
     def __init__(self):
         super().__init__()
         weights = VGG16_Weights.IMAGENET1K_FEATURES
-         # using style layers (relu1_2, relu2_2, relu3_3, relu4_3->22)
-        self.features = vgg16(weights=weights).features[:23] 
-        # VGG is only used to evaluate sytlenet
+        # Keep layers through relu4_3 (index 22).
+        self.features = vgg16(weights=weights).features[:23]
+        # VGG is only used to calculate perceptual losses.
         self.features.eval()
         self.features.requires_grad_(False)
 
     def forward(self, x):
-        # output of out model is [-1,1]->move to [0,1]
+        # Convert the model output range from [-1, 1] to [0, 1].
         x = (x + 1.0) / 2.0
         mean = x.new_tensor([0.48235, 0.45882, 0.40784]).view(1, 3, 1, 1)
         std = x.new_tensor([1 / 255, 1 / 255, 1 / 255]).view(1, 3, 1, 1)
@@ -68,8 +68,7 @@ class VGGFeatures(nn.Module):
 
         return extracted_features
 
-# gram matrix shows that image’s style, such as colors, textures 
-# by calculating correlations between VGG feature channels as a C × C matrix.
+# A Gram matrix represents style through correlations between VGG channels.
 def gram_matrix(features: torch.Tensor):
     # [B,C,H,W]
     batch, channels, height, width = features.shape
@@ -89,7 +88,7 @@ dataset = datasets.ImageFolder(DATA_DIR.parent, transform=IMAGE_TRANSFORM)
 
 train_dataset, val_dataset, _ = random_split(
     dataset,
-    [TRAIN_SIZE, VAL_SIZE, len(dataset) - TRAIN_SIZE - VAL_SIZE], 
+    [TRAIN_SIZE, VAL_SIZE, len(dataset) - TRAIN_SIZE - VAL_SIZE],
     generator=torch.Generator().manual_seed(42),
 )
 train_loader = DataLoader(
@@ -126,7 +125,7 @@ for epoch in range(EPOCHS):
     model.train()
     epoch_loss = 0.0
 
-    for batch_index, (content_images, _) in enumerate(train_loader):
+    for content_images, _ in train_loader:
         content_images = content_images.to(device)
 
         generated_images = model(content_images)
@@ -143,10 +142,11 @@ for epoch in range(EPOCHS):
         style_loss = generated_images.new_zeros(())
         for layer in style_gram_targets:
             generated_gram = gram_matrix(generated_features[layer])
-            target_gram = style_gram_targets[layer].expand_as(generated_gram)  #[1,C,C] -> [B,C,C]
+            # Expand [1, C, C] to the current batch shape [B, C, C].
+            target_gram = style_gram_targets[layer].expand_as(generated_gram)
             style_loss += loss_function(
-                generated_gram, 
-                target_gram
+                generated_gram,
+                target_gram,
             )
 
         loss = CONTENT_WEIGHT * content_loss + STYLE_WEIGHT * style_loss
@@ -155,7 +155,7 @@ for epoch in range(EPOCHS):
         loss.backward()
         optimizer.step()
 
-        epoch_loss += loss.item() * content_images.size(0) # batch size
+        epoch_loss += loss.item() * content_images.size(0)
 
     average_loss = epoch_loss / len(train_dataset)
     print(f"Epoch {epoch + 1}/{EPOCHS}, loss: {average_loss:.6f}")

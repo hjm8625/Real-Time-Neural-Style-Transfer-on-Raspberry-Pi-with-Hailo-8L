@@ -3,9 +3,10 @@
 import torch
 from torch import nn
 
+
 # Convolution block
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride = 1):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1):
         super().__init__()
         self.conv = nn.Conv2d(
             in_channels,
@@ -42,7 +43,7 @@ class ResidualBlock(nn.Module):
         x = self.bn2(x)
         return x + residual
 
-# Upsample block (Using upsample to use stride = 0.5)
+# Upsample block using nearest-neighbor resize followed by convolution
 class UpsampleBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
@@ -63,14 +64,14 @@ class UpsampleBlock(nn.Module):
         x = self.bn(x)
         return self.relu(x)
 
-# main Network
+# Main network
 class StyleTransferNet(nn.Module):
     def __init__(self):
         super().__init__()
         self.encoder1 = ConvBlock(3, 32, kernel_size=9)
         self.encoder2 = ConvBlock(32, 64, kernel_size=3, stride=2)
         self.encoder3 = ConvBlock(64, 128, kernel_size=3, stride=2)
-        # repeat 5 residual 
+        # Five residual blocks
         self.residual_blocks = nn.ModuleList(
             [ResidualBlock(128) for _ in range(5)]
         )
@@ -84,7 +85,7 @@ class StyleTransferNet(nn.Module):
         x = self.encoder2(x)
         x = self.encoder3(x)
 
-        for block in self.residual_blocks: # 5 blocks in this model
+        for block in self.residual_blocks:
             x = block(x)
 
         x = self.upsample1(x)

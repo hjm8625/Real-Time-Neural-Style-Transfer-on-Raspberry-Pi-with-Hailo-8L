@@ -59,8 +59,12 @@ with VDevice() as target:
 
             try:
                 while True:
-                    frame = camera.capture_array()
-                    input_frame = cv2.resize(frame, (input_width, input_height))
+                    frame_bgr = camera.capture_array()
+                    frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+                    input_frame = cv2.resize(
+                        frame_rgb,
+                        (input_width, input_height),
+                    )
 
                     # Match the [-1, 1] input range used during training.
                     input_tensor = input_frame.astype(np.float32) / 127.5 - 1.0
